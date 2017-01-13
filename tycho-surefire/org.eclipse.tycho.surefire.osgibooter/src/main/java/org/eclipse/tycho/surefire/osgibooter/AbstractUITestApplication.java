@@ -27,11 +27,14 @@ public abstract class AbstractUITestApplication implements ITestHarness {
     private TestableObject fTestableObject;
 
     public void runTests() {
+        System.out.println("AbstractUITEstApplication 1");
         fTestableObject.testingStarting();
         if (useUIThread(fArgs)) {
+            System.out.println("AbstractUITEstApplication 2");
             fTestableObject.runTest(new Runnable() {
                 public void run() {
                     try {
+                        System.out.println("AbstractUITEstApplication 3");
                         fTestRunnerResult = OsgiSurefireBooter.run(fArgs);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
@@ -40,6 +43,7 @@ public abstract class AbstractUITestApplication implements ITestHarness {
                 }
             });
         } else {
+            System.out.println("AbstractUITEstApplication x");
             try {
                 fTestRunnerResult = OsgiSurefireBooter.run(fArgs);
             } catch (Exception e) {
@@ -110,6 +114,7 @@ public abstract class AbstractUITestApplication implements ITestHarness {
         if (args != null)
             fArgs = args;
         fTestableObject = PlatformUI.getTestableObject();
+        System.out.println(fTestableObject.getClass());
         fTestableObject.setTestHarness(this);
         try {
             Object application = getApplicationToRun(args);

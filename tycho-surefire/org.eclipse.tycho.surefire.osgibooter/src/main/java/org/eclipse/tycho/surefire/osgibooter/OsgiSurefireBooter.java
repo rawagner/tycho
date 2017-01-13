@@ -53,10 +53,11 @@ import org.osgi.framework.BundleException;
 public class OsgiSurefireBooter {
 
     public static int run(String[] args) throws Exception {
+        System.out.println("OsgiSurefireBooter 1");
         Properties testProps = loadProperties(getTestProperties(args));
         boolean failIfNoTests = Boolean.parseBoolean(testProps.getProperty("failifnotests", "false"));
-        boolean redirectTestOutputToFile = Boolean.parseBoolean(testProps.getProperty("redirectTestOutputToFile",
-                "false"));
+        boolean redirectTestOutputToFile = Boolean
+                .parseBoolean(testProps.getProperty("redirectTestOutputToFile", "false"));
         String testPlugin = testProps.getProperty("testpluginname");
         File testClassesDir = new File(testProps.getProperty("testclassesdirectory"));
         File reportsDir = new File(testProps.getProperty("reportsdirectory"));
@@ -73,7 +74,7 @@ public class OsgiSurefireBooter {
         boolean useFile = true;
         boolean printSummary = true;
         boolean disableXmlReport = false;
-
+        System.out.println("OsgiSurefireBooter 2");
         ClasspathConfiguration classPathConfig = new ClasspathConfiguration(false, false);
         StartupConfiguration startupConfiguration = new StartupConfiguration(provider, classPathConfig,
                 new ClassLoaderConfiguration(useSystemClassloader, useManifestOnlyJar), forkRequested, inForkedVM);
@@ -83,6 +84,7 @@ public class OsgiSurefireBooter {
                 emptyList(), emptyList(), failIfNoTests, runOrder);
         ReporterConfiguration reporterConfig = new ReporterConfiguration(reportsDir, trimStacktrace);
         TestRequest testRequest = new TestRequest(suiteXmlFiles, testClassesDir, null);
+        System.out.println("OsgiSurefireBooter 3");
         ProviderConfiguration providerConfiguration = new ProviderConfiguration(dirScannerParams,
                 new RunOrderParameters(runOrder, null), failIfNoTests, reporterConfig, null, testRequest,
                 extractProviderProperties(testProps), null, false);
@@ -90,11 +92,13 @@ public class OsgiSurefireBooter {
                 StartupReportConfiguration.PLAIN_REPORT_FORMAT, redirectTestOutputToFile, disableXmlReport, reportsDir,
                 trimStacktrace, null, "TESTHASH", false);
         ReporterFactory reporterFactory = new DefaultReporterFactory(startupReportConfig);
+        System.out.println("OsgiSurefireBooter 4");
         // API indicates we should use testClassLoader below but surefire also tries 
         // to load surefire classes using this classloader
         RunResult result = ProviderFactory.invokeProvider(null, createCombinedClassLoader(testPlugin), reporterFactory,
                 providerConfiguration, false, startupConfiguration, true);
         // counter-intuitive, but null indicates OK here
+        System.out.println("OsgiSurefireBooter 5");
         return result.getFailsafeCode() == null ? 0 : result.getFailsafeCode();
     }
 
@@ -132,13 +136,9 @@ public class OsgiSurefireBooter {
                 return file;
             }
         }
-        throw new CoreException(
-                new Status(
-                        IStatus.ERROR,
-                        Activator.PLUGIN_ID,
-                        0,
-                        "-testproperties command line parameter is not specified or does not point to an accessible file",
-                        null));
+        throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, 0,
+                "-testproperties command line parameter is not specified or does not point to an accessible file",
+                null));
     }
 
     private static List<String> getIncludesExcludes(String string) {
